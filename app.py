@@ -5,6 +5,53 @@ import plotly.graph_objects as go
 st.title("my streamlit app")
 
 #----------------------------------
+st.header('lesson 6 : bar chart')
+data = {
+    'product': ['A', 'B', 'C', 'D', 'E'],
+    'sales': [300, 400, 200, 600, 500],
+    'profit': [30, 60, 20, 100, 80]
+}
+df = pd.DataFrame(data)
+
+st.write('sample data')
+st.dataframe(df)
+
+fig = go.Figure()
+fig.add_trace(go.Bar(x=df['product'], y=df['sales'], name='sales'))
+fig.add_trace(go.Bar(x=df['product'], y=df['profit'], name='profit'))
+
+fig.update_layout(
+    title='sales and profit',
+    xaxis_title='product',
+    yaxis_title='amount',
+    barmode='group'
+)
+st.plotly_chart(fig)
+
+
+
+fig = go.Figure()
+fig.add_trace(go.Bar(x=df['product'], y=df['sales'], name='sales', marker_color='blue'))
+fig.add_trace(go.Bar(x=df['product'], y=df['profit'], name='profit', marker_color='red'))
+
+fig.update_layout(
+    title='sales and profit',
+    xaxis_title='product',
+    yaxis_title='amount',
+    barmode='group',
+    font=dict(family='Meirio', size=12),
+    legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+    hovermode='x unified'
+)
+
+# グラフに数値のラベルを表示
+fig.update_traces(texttemplate='%{y}', textposition='outside')
+
+fig.update_yaxes(range=[0, max(df['sales'].max(), df['profit'].max()) * 1.1])
+st.plotly_chart(fig)
+
+
+#----------------------------------
 st.header('lesson 5 : add line plots')
 
 data = {
