@@ -1,8 +1,63 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
+import time
 
 st.title("my streamlit app")
+
+#----------------------------------
+st.header('lesson 8 : cache')
+
+def generate_large_dateset():
+    data = pd.DataFrame(np.random.randn(1000000, 5), columns=['A', 'B', 'C', 'D', 'E'])
+    return data
+
+@st.cache_data
+def load_data_cached():
+    return generate_large_dateset()
+
+def load_data_uncached():
+    return generate_large_dateset()
+
+st.subheader('without cache')
+start_time = time.time()
+data_uncached = load_data_uncached()
+end_time = time.time()
+st.write(f'loading time : {end_time - start_time:.2f} sec')
+st.write(data_uncached.head())
+
+st.subheader('with cache')
+start_time = time.time()
+data_cached = load_data_cached()
+end_time = time.time()
+st.write(f'loading time : {end_time - start_time:.2f} sec')
+st.write(data_cached.head())
+
+@st.cache_resource
+def load_large_dataset():
+    return pd.DataFrame(
+                np.random.randn(1000000, 5),
+                columns=['A', 'B', 'C', 'D', 'E']
+    )
+st.subheader('large dataset')
+start_time = time.time()
+large_data = load_large_dataset()
+end_time = time.time()
+st.write(f'loading time : {end_time - start_time:.2f} sec')
+st.write(f'data shape : {large_data.shape}')
+st.write(large_data.head())
+
+
+@st.cache_data(ttl=10)
+def get_current_time():
+    return pd.Timestamp.now()
+
+st.subheader('disable cache')
+st.write('update per 10 sec')
+st.write(get_current_time())
+
+
 
 #----------------------------------
 st.header('lesson 7: pie chart')
