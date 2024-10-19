@@ -7,6 +7,62 @@ import time
 st.title("my streamlit app")
 
 #----------------------------------
+
+
+
+
+#----------------------------------
+st.header('lesson 9 : managing session')
+if 'count' not in st.session_state:
+    st.session_state.count = 0
+
+st.write(f'current count : {st.session_state.count}')
+
+if st.button('count up'):
+    st.session_state.count += 1
+    st.rerun()
+
+if 'user_name' not in st.session_state:
+    st.session_state.user_name = ''
+if 'user_email' not in st.session_state:
+    st.session_state.user_email = ''
+
+user_name = st.text_input('user name', value=st.session_state.user_name, key='tmp_user_name')
+user_email = st.text_input('email address', value=st.session_state.user_email, key='tmp_email')
+
+if st.button('save user info'):
+    st.session_state.user_name = user_name
+    st.session_state.user_email = user_email
+    st.success('saved')
+
+st.write(f'saved user name: {st.session_state.user_name}')
+st.write(f'saved email address: {st.session_state.user_email}')
+
+# manage session of dataframe
+if 'df' not in st.session_state:
+    st.session_state.df = pd.DataFrame(columns=['product', 'price'])
+
+product = st.text_input('product name', key='tmp_product_name')
+price = st.number_input('price', min_value=0, key='tmp_price')
+
+if st.button('add product'):
+    new_data = pd.DataFrame({
+        'product': [product],
+        'price' : [price]
+    })
+    st.session_state.df = pd.concat([st.session_state.df, new_data],
+                                    ignore_index=True)
+
+st.write('products')
+st.write(st.session_state.df)
+
+if st.button('reset data'):
+    st.session_state.df = pd.DataFrame(columns=['product', 'price'])
+    st.rerun()
+
+
+
+#----------------------------------
 st.header('lesson 8 : cache')
 
 def generate_large_dateset():
@@ -229,7 +285,7 @@ st.plotly_chart(fig)
 #----------------------------------
 st.header('lesson 4 : add data')
 
-name = st.text_input('enter your name')
+name = st.text_input('enter your name', key='tmp_name')
 if name:
     st.write(f'hello {name}')
 
