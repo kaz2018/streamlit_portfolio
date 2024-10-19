@@ -5,6 +5,48 @@ import plotly.graph_objects as go
 st.title("my streamlit app")
 
 #----------------------------------
+st.header('lesson 7: pie chart')
+data = {
+    'product' : ['A', 'B', 'C', 'D', 'E'],
+    'sales' : [300, 200, 180, 150, 120]
+}
+df = pd.DataFrame(data)
+
+st.write('sample : pie chart')
+st.dataframe(df)
+
+fig = go.Figure(data=go.Pie(labels=df['product'], values=df['sales']))
+fig.update_layout(title='sales share by product')
+st.plotly_chart(fig)
+
+
+# custom
+colors = ['gold', 'mediumturquoise', 'darkorange', 'lightgreen', 'lightcoral']
+
+fig = go.Figure(data=[go.Pie(
+                    labels=df['product'],
+                    values=df['sales'],
+                    hole=.3,
+                    marker=dict(
+                        colors=colors,
+                        line=dict(color='#000000', width=2)
+                    )
+)])
+fig.update_traces(
+    textposition='inside',
+    textinfo='percent+label',
+    hoverinfo='label+value+percent',
+    textfont_size=14
+)
+fig.update_layout(
+    title='sales by product',
+    font=dict(family='Meirio', size=12),
+    legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+    annotations=[dict(text='sales', x=0.5, y=0.5, font_size=20, showarrow=False)]
+)
+st.plotly_chart(fig)
+
+#----------------------------------
 st.header('lesson 6 : bar chart')
 data = {
     'product': ['A', 'B', 'C', 'D', 'E'],
