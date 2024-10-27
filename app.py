@@ -2,9 +2,92 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
+import io
 import time
+import openpyxl
 
 st.title("my streamlit app")
+
+#----------------------------------
+st.header('lesson 12: file uploader')
+
+uploaded_csv = st.file_uploader(
+    'upload csv file',
+    type='csv',
+    key='csv_uploader'
+)
+
+if uploaded_csv is not None:
+    df_csv = pd.read_csv(uploaded_csv)
+    st.write('content in uploaded_csv: ')
+    st.write(df_csv)
+
+    st.write('basic statics: ')
+    st.write(df_csv.describe())
+
+#     # select columns
+    numeric_columns = df_csv.select_dtypes(include=[np.number]).columns.tolist()
+    selected_column = st.selectbox(
+        'select columns to visualization: ',
+        numeric_columns,
+        key='csv_column_select'
+    )
+
+#     # histogram
+    fig = go.Figure(data=[go.Histogram(x=df_csv[selected_column])])
+    fig.update_layout(title=f'{selected_column} histogram')
+    st.plotly_chart(fig)
+
+
+uploaded_excel = st.file_uploader(
+    'upload excel: ',
+    type=['xlsx', 'xls'],
+    key='excel_uploader'
+)
+
+if uploaded_excel is not None:
+    excel_file = openpyxl.load_workbook(uploaded_excel)
+    sheet_names = excel_file.sheetnames
+
+    st.write('sheet_names: ')
+    st.write(sheet_names)
+
+    selected_sheet = st.radio(
+        'select sheet for analysis: ',
+        sheet_names,
+        key='sheet_selector'
+    )
+
+    df_excel = pd.read_excel(uploaded_excel, sheet_name=selected_sheet)
+    st.write(f'description of "{selected_sheet}: ')
+    st.write(df_excel)
+
+    # select columns
+    selected_columns = st.multiselect(
+        'select dolumns to display: ',
+        df_excel.columns.to_list(),
+        key='excel_column_select'
+    )
+
+    if selected_columns:
+        st.write('description of selected_columns: ')
+        st.write(df_excel[selected_columns])
+
+        # scatter chat
+        if len(selected_columns) == 2:
+            fig = go.Figure(data=go.Scatter(
+                x=df_excel[selected_columns[0]],
+                y=df_excel[selected_columns[1]],
+                mode='markers'
+            ))
+
+            fig.update_layout(
+                title=f'scatter of {selected_columns[0]} vs {selected_columns[1]}'
+            )
+            st.plotly_chart(fig)
+
+
+
 
 #----------------------------------
 st.header('lesson 11: sliders and checkboxs')
